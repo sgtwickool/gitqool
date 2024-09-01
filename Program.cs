@@ -1,4 +1,5 @@
 ﻿using System.CommandLine;
+using gitqool.Application;
 
 Option<string> serverOption = new(
     aliases: new[] { "--servername", "-s" },
@@ -46,13 +47,16 @@ rootCommand.SetHandler((saveCommand) =>
         Console.WriteLine("You must define a command!");
     });
 
-saveCommand.SetHandler((serverOptionValue, databaseOptionValue, usernameOptionValue, passwordOptionValue, locationOptionValue) =>
+saveCommand.SetHandler(async (server, database, username, password, location) =>
     {
-        Console.WriteLine($"--servername = {serverOptionValue}");
-        Console.WriteLine($"--database = {databaseOptionValue}");
-        Console.WriteLine($"--username = {usernameOptionValue}");
-        Console.WriteLine($"--password = {passwordOptionValue}");
-        Console.WriteLine($"--location = {locationOptionValue}");
+        Console.WriteLine($"--servername = {server}");
+        Console.WriteLine($"--database = {database}");
+        Console.WriteLine($"--username = {username}");
+        Console.WriteLine($"--password = {password}");
+        Console.WriteLine($"--location = {location}");
+
+        DbObjectDefinitionsRepo dbRepo = new();
+        await dbRepo.GetAllAsync<IDbObjectDefinitionsRepository>(server, database, username, password);
     },
     serverOption, databaseOption, usernameOption, passwordOption, locationOption);
 
